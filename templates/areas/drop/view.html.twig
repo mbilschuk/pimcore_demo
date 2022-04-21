@@ -1,0 +1,12 @@
+<section class="area-standard-teaser bg-light text-center">
+    <div class="container">
+        {{
+            pimcore_renderlet('dropImage', {
+                "controller" : "App\\Controller\\DropImageController::imageAction",
+                "title" : "Drag image asset and Drop it here. You will see <strong>sha256</strong> hash and two thumbnails with some effects",
+                "height" : 600
+            })
+        }}
+
+    </div>
+</section>
