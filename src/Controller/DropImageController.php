@@ -21,18 +21,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Pimcore\Model\Asset\Image;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-class DropImageController extends BaseController {
+class DropImageController extends BaseController
+{
 
     /**
-     * Return sha256 fingerprint of image
+     * Return sha256 fingerprint of the image
      *
      * @param Image $image
      * @return string
      */
-    private function getSha256Value(Image $image ): string
+    private function getSha256Value(Image $image): string
     {
-        $fullPath = PIMCORE_WEB_ROOT . '/var/assets' . $image->getRealFullPath();
-        return hash('sha256', file_get_contents($fullPath));
+        return hash('sha256', $image->getData());
     }
 
     /**
