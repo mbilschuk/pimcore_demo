@@ -16,11 +16,25 @@
 namespace App\Document\Areabrick;
 
 use App\Document\Areabrick\AbstractAreabrick;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Drop extends AbstractAreabrick
 {
+    private TranslatorInterface $translator;
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
-        return 'Drop image asset';
+        return $this->translator->trans('areabrick.drop.name');
     }
 }
