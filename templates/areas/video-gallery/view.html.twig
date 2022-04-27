@@ -1,0 +1,78 @@
+{% set defaultWidth = 640 %}
+{% set maxItemCount = 10 %}
+
+{% set selectItemCount = [] %}
+{% for i in 1..maxItemCount %}
+    {% set selectItemCount = selectItemCount | merge([i]) %}
+{% endfor %}
+
+{% set itemCountSelect = pimcore_select('itemCount', {
+    store: selectItemCount,
+    reload: true,
+    width: 70,
+    class: 'align-middle',
+    defaultValue: 1
+}) %}
+
+{% set itemCount = itemCountSelect.getData() | default(1) %}
+
+{% if editmode %}
+<div class="alert alert-secondary col-xs-12" style="height: 75px">
+    <div class="col-xs-6 d-inline mx-auto">
+        <span class="editmode-label align-middle">How many video you want to show?</span>
+        {{ itemCountSelect | raw }}
+    </div>
+</div>
+{%  endif %}
+
+<table>
+    {% for i in 0 .. ( itemCount - 1 ) %}
+        <tr>
+            <td>
+                <div class="cms_video_block">
+                    {% if editmode %}
+                        {% set video = pimcore_video('video' ~ i, {
+                            attributes: {
+                                class: 'video-js vjs-default-skin',
+                            },
+                            thumbnail: 'width' ~ defaultWidth,
+                            width: defaultWidth,
+                            editmodeImagePreview: true,
+                            })
+                        %}
+
+                        <!-- replace uri only for asset video -->
+                        {% if (not video.isEmpty()) and (video.getVideoType() == 'asset') %}
+                            <!-- uri for first frame of video -->
+                            {% set firstFrameUri = path(
+                                'pimcore_admin_asset_getvideothumbnail',
+                                {
+                                    id: video.id,
+                                    width: defaultWidth,
+                                    time: 0
+                                })
+                            %}
+                            <!-- replace generated url to thumbnail by our firstFrameUri -->
+                            {% set p1 = video | split('<img') %}
+                            {% set p2 = p1[1] | split('/>') %}
+                            {% set video = p1[0] ~ '<img width="' ~ defaultWidth ~ '" src="' ~ firstFrameUri ~ '"/>' ~ p2[1] %}
+                        {% endif %}
+
+                        {{ video | raw }}
+
+                    {% else %}
+                        {{
+                            pimcore_video('video' ~ i, {
+                                attributes: {
+                                    class: 'video-js vjs-default-skin vjs-big-play-centered'
+                                },
+                                thumbnail: 'width' ~ defaultWidth,
+                                width: defaultWidth,
+                            })
+                        }}
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
