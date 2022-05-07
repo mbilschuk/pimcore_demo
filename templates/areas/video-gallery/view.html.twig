@@ -40,12 +40,20 @@
                     })
                     %}
 
-                    <!-- show first frame -->
-                    {% if editmode and (not video.isEmpty()) and (video.getVideoType() == 'asset') %}
+                    {% if editmode and not video.isEmpty() and not (video.getVideoAsset() is null) and (video.getVideoType() == 'asset') %}
+                        <!-- set use first frame for video thumbnail -->
+                        {% set originalThumbnailTime =  video.getVideoAsset().getCustomSetting('image_thumbnail_time') %}
                         {% do video.getVideoAsset().setCustomSetting('image_thumbnail_time', 0) %}
                     {% endif %}
 
+                    <!-- render video -->
                     {{ video | raw }}
+
+                    <!-- restore original thumbnail time -->
+                    {% if editmode and not video.isEmpty() and not (video.getVideoAsset() is null) and (video.getVideoType() == 'asset') and
+                        not  (originalThumbnailTime is null) %}
+                        {% do video.getVideoAsset().setCustomSetting('image_thumbnail_time', originalThumbnailTime) %}
+                    {% endif %}
                 </div>
             </td>
         </tr>
