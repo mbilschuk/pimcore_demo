@@ -1,0 +1,61 @@
+{% set defaultWidth = 640 %}
+{% set maxItemCount = 10 %}
+
+{% set selectItemCount = [] %}
+{% for i in 1..maxItemCount %}
+    {% set selectItemCount = selectItemCount | merge([i]) %}
+{% endfor %}
+
+{% set itemCountSelect = pimcore_select('itemCount', {
+    store: selectItemCount,
+    reload: true,
+    width: 70,
+    class: 'align-middle',
+    defaultValue: 1
+}) %}
+
+{% set itemCount = itemCountSelect.getData() | default(1) %}
+
+{% if editmode %}
+    <div class="alert alert-secondary col-xs-12" style="height: 75px">
+        <div class="col-xs-6 d-inline mx-auto">
+            <span class="editmode-label align-middle">How many video you want to show?</span>
+            {{ itemCountSelect | raw }}
+        </div>
+    </div>
+{%  endif %}
+
+<table>
+    {% for i in 0 .. ( itemCount - 1 ) %}
+        <tr>
+            <td>
+                <div class="cms_video_block">
+                    {% set video = pimcore_video('video' ~ i, {
+                        attributes: {
+                            class: 'video-js vjs-default-skin',
+                        },
+                        thumbnail: 'width' ~ defaultWidth,
+                        width: defaultWidth,
+                        editmodeImagePreview: editmode,
+                    })
+                    %}
+
+                    {% if editmode and not video.isEmpty() and not (video.getVideoAsset() is null) and (video.getVideoType() == 'asset') %}
+                        <!-- set use first frame for video thumbnail -->
+                        {% set originalThumbnailTime =  video.getVideoAsset().getCustomSetting('image_thumbnail_time') %}
+                        {% do video.getVideoAsset().setCustomSetting('image_thumbnail_time', 0) %}
+                    {% endif %}
+
+                    <!-- render video -->
+                    {{ video | raw }}
+
+                    <!-- restore original thumbnail time -->
+                    {% if editmode and not video.isEmpty() and not (video.getVideoAsset() is null) and (video.getVideoType() == 'asset') and
+                        not  (originalThumbnailTime is null) %}
+                        {% do video.getVideoAsset().setCustomSetting('image_thumbnail_time', originalThumbnailTime) %}
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
