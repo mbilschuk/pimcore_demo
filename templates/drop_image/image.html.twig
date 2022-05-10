@@ -1,0 +1,23 @@
+{% if image %}
+<table>
+    <tr>
+        <td colspan="2" class="alert alert-info">
+            <strong>sha256: </strong>
+            <span>{{ sha256value }}</span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            {{ image.thumbnail().getHtml() | raw }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {{ image.thumbnail('rotate180').getHtml() | raw }}
+        </td>
+        <td>
+            {{ image.thumbnail('grayscale').getHtml() | raw }}
+        </td>
+    </tr>
+</table>
+{% endif %}
