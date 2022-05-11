@@ -1,8 +1,7 @@
 version: '3'
-
 services:
-
     php-fpm:
+        user: $UID:$GID
         build:
             context: .
             dockerfile: .docker/php-fpm/Dockerfile
@@ -16,7 +15,6 @@ services:
             - .:/var/www/html
         depends_on:
             -   database
-
     database:
         image: mysql:8.0
         container_name: database
