@@ -21,6 +21,9 @@
     "pimcore/data-hub": "^1.0",
     "pimcore/payment-provider-paypal-smart-payment-button": "^1.0"
   },
+  "replace": {
+    "stella-maris/clock": "*"
+  },
   "conflict": {
     "hwi/oauth-bundle": "1.4.0"
   },
